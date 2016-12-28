@@ -1,0 +1,542 @@
+// ~->[DNET-1]->~
+
+// File created by GmytrasiewiczP_2 at UIC using Netica 5.24 on Oct 20, 2016 at 22:16:36 UTC.
+
+bnet Aircraft_Risk_Assessment {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+whenchanged = 1477001796;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 9;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (21, 3, 1134, 615);
+	resolution = 72;
+	magnification = 0.840896;
+	drawingbounds = (1802, 873);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00e1e1e1;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00f8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00d3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00c8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00ffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00ffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00ffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00dee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00f0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00ffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		};
+	};
+
+node Repeat_Defect {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, High);
+	parents = ();
+	probs = 
+		// Low          High         
+		  (0.629101,    0.370899);
+	whenchanged = 1476998988;
+	likelihood = (0.2068235, 1);
+	belief = (0.2531551, 0.7468449);
+	visual V1 {
+		center = (300, 72);
+		height = 17;
+		};
+	};
+
+node Not_Normal_Report {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Yes, No);
+	parents = ();
+	probs = 
+		// Yes          No           
+		  (0.22016,     0.77984);
+	whenchanged = 1476911739;
+	likelihood = (0.4352291, 0.314889);
+	belief = (0.2615333, 0.7384667);
+	visual V1 {
+		center = (120, 126);
+		height = 15;
+		};
+	};
+
+node SDR {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, Midium, High);
+	parents = ();
+	probs = 
+		// Low          Midium       High         
+		  (0.3343636,   0.4107896,   0.2548467);
+	whenchanged = 1477000829;
+	evidence = High;
+	belief = (0, 0, 1);
+	visual V1 {
+		center = (138, 246);
+		height = 16;
+		};
+	};
+
+node Fault_Log_Maintenance {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = ();
+	probs = 
+		// Good         Bad          
+		  (0.71,        0.29);
+	whenchanged = 1476911709;
+	evidence = Good;
+	belief = (1, 0);
+	visual V1 {
+		center = (216, 330);
+		height = 1;
+		};
+	};
+
+node Technology_Fault {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, High);
+	parents = (Repeat_Defect, Not_Normal_Report, SDR, Fault_Log_Maintenance);
+	probs = 
+		// Low          High          // Repeat_Defect Not_Normal_Report SDR    Fault_Log_Maintenance 
+		  (0.1424935,   0.8575065,    // Low           Yes               Low    Good                  
+		   0.03162603,  0.968374,     // Low           Yes               Low    Bad                   
+		   0.0129303,   0.9870697,    // Low           Yes               Midium Good                  
+		   0.7068076,   0.2931924,    // Low           Yes               Midium Bad                   
+		   0.5283056,   0.4716944,    // Low           Yes               High   Good                  
+		   0.005198759, 0.9948012,    // Low           Yes               High   Bad                   
+		   0.4820802,   0.5179198,    // Low           No                Low    Good                  
+		   0.4383273,   0.5616727,    // Low           No                Low    Bad                   
+		   0.8994445,   0.1005555,    // Low           No                Midium Good                  
+		   0.4791664,   0.5208336,    // Low           No                Midium Bad                   
+		   0.2688339,   0.7311661,    // Low           No                High   Good                  
+		   0.9388342,   0.06116584,   // Low           No                High   Bad                   
+		   0.8402824,   0.1597176,    // High          Yes               Low    Good                  
+		   0.1842812,   0.8157188,    // High          Yes               Low    Bad                   
+		   0.3435599,   0.6564401,    // High          Yes               Midium Good                  
+		   0.4855053,   0.5144947,    // High          Yes               Midium Bad                   
+		   0.1946608,   0.8053392,    // High          Yes               High   Good                  
+		   0.3850117,   0.6149883,    // High          Yes               High   Bad                   
+		   0.0338761,   0.9661239,    // High          No                Low    Good                  
+		   0.4461794,   0.5538206,    // High          No                Low    Bad                   
+		   0.7910336,   0.2089664,    // High          No                Midium Good                  
+		   0.1917562,   0.8082439,    // High          No                Midium Bad                   
+		   0.4654226,   0.5345774,    // High          No                High   Good                  
+		   0.2383727,   0.7616274);   // High          No                High   Bad                   ;
+	numcases = 
+		                 // Repeat_Defect Not_Normal_Report SDR    Fault_Log_Maintenance 
+		  (0.3493508,    // Low           Yes               Low    Good                  
+		   0.9176086,    // Low           Yes               Low    Bad                   
+		   0.6336396,    // Low           Yes               Midium Good                  
+		   0.581938,     // Low           Yes               Midium Bad                   
+		   0.9251381,    // Low           Yes               High   Good                  
+		   0.5617089,    // Low           Yes               High   Bad                   
+		   0.7826982,    // Low           No                Low    Good                  
+		   0.679604,     // Low           No                Low    Bad                   
+		   0.9119059,    // Low           No                Midium Good                  
+		   0.9117323,    // Low           No                Midium Bad                   
+		   0.5526108,    // Low           No                High   Good                  
+		   0.6936985,    // Low           No                High   Bad                   
+		   0.8615332,    // High          Yes               Low    Good                  
+		   0.6677796,    // High          Yes               Low    Bad                   
+		   0.9863648,    // High          Yes               Midium Good                  
+		   0.6931669,    // High          Yes               Midium Bad                   
+		   0.6742744,    // High          Yes               High   Good                  
+		   0.7018856,    // High          Yes               High   Bad                   
+		   0.8629839,    // High          No                Low    Good                  
+		   0.8753926,    // High          No                Low    Bad                   
+		   0.6555059,    // High          No                Midium Good                  
+		   0.5863843,    // High          No                Midium Bad                   
+		   0.739258,     // High          No                High   Good                  
+		   0.7038752);   // High          No                High   Bad                   ;
+	whenchanged = 1476999420;
+	likelihood = (1, 0.5064043);
+	belief = (0.5444344, 0.4555656);
+	visual V1 {
+		center = (426, 312);
+		height = 6;
+		link 3 {
+			path = ((217, 264), (354, 296));
+			};
+		};
+	};
+
+node General_Maintenance_Mistake {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, High);
+	parents = ();
+	probs = 
+		// Low          High         
+		  (0.95,        0.05);
+	whenchanged = 1476911779;
+	likelihood = (0.1646128, 1);
+	belief = (0.7562883, 0.2437116);
+	visual V1 {
+		center = (492, 588);
+		height = 10;
+		};
+	};
+
+node Serious_Mistakes {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, Medium, High);
+	parents = ();
+	probs = 
+		// Low          Medium       High         
+		  (0.3,         0.4,         0.3);
+	whenchanged = 1476911774;
+	likelihood = (0.758957, 0.2158054, 1);
+	belief = (0.3966849, 0.1356888, 0.4676263);
+	visual V1 {
+		center = (738, 588);
+		height = 9;
+		};
+	};
+
+node Maintenance_Log {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = ();
+	probs = 
+		// Good         Bad          
+		  (0.6805383,   0.3194617);
+	whenchanged = 1476911769;
+	likelihood = (0.04497885, 1);
+	belief = (0.09440037, 0.9056);
+	visual V1 {
+		center = (792, 474);
+		height = 8;
+		};
+	};
+
+node All_Symtoms_Whn_Accident {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, Medium, High);
+	parents = ();
+	probs = 
+		// Low          Medium       High         
+		  (0.3,         0.67,        0.03);
+	whenchanged = 1476998999;
+	evidence = Medium;
+	belief = (0, 1, 0);
+	visual V1 {
+		center = (300, 486);
+		height = 18;
+		};
+	};
+
+node Maintenance {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, Medium, High);
+	parents = (General_Maintenance_Mistake, Serious_Mistakes, Maintenance_Log, All_Symtoms_Whn_Accident);
+	probs = 
+		// low          Medium       High          // General_Maintenance_Mistake Serious_Mistakes Maintenance_Log All_Symtoms_Whn_Accident 
+		  (0.12,        0.08,        0.8,          // Low                         Low              Good            Low                      
+		   0.2,         0.2,         0.6,          // Low                         Low              Good            Medium                   
+		   0.35,        0.15,        0.5,          // Low                         Low              Good            High                     
+		   0.35,        0.15,        0.5,          // Low                         Low              Bad             Low                      
+		   0.55,        0.1,         0.35,         // Low                         Low              Bad             Medium                   
+		   0.85,        0.1,         0.05,         // Low                         Low              Bad             High                     
+		   0.3,         0.3,         0.4,          // Low                         Medium           Good            Low                      
+		   0.45,        0.24,        0.31,         // Low                         Medium           Good            Medium                   
+		   0.76,        0.15,        0.09,         // Low                         Medium           Good            High                     
+		   0.65,        0.27,        0.08,         // Low                         Medium           Bad             Low                      
+		   0.75,        0.23,        0.02,         // Low                         Medium           Bad             Medium                   
+		   0.85,        0.14,        0.01,         // Low                         Medium           Bad             High                     
+		   0.25,        0.05,        0.7,          // Low                         High             Good            Low                      
+		   0.3,         0.144,       0.556,        // Low                         High             Good            Medium                   
+		   0.4,         0.2221,      0.3779,       // Low                         High             Good            High                     
+		   0.5,         0.3748,      0.1252,       // Low                         High             Bad             Low                      
+		   0.6,         0.3332,      0.0668,       // Low                         High             Bad             Medium                   
+		   0.95,        0.0459,      0.0041,       // Low                         High             Bad             High                     
+		   0.3,         0.2,         0.5,          // High                        Low              Good            Low                      
+		   0.65,        0.205,       0.145,        // High                        Low              Good            Medium                   
+		   0.85,        0.1035,      0.0465,       // High                        Low              Good            High                     
+		   0.67,        0.2165,      0.1135,       // High                        Low              Bad             Low                      
+		   0.76,        0.15356,     0.08644,      // High                        Low              Bad             Medium                   
+		   0.9,         0.0905,      0.0095,       // High                        Low              Bad             High                     
+		   0.35,        0.0343,      0.6157,       // High                        Medium           Good            Low                      
+		   0.49,        0.1976,      0.3124,       // High                        Medium           Good            Medium                   
+		   0.615,       0.1996,      0.1854,       // High                        Medium           Good            High                     
+		   0.59,        0.3335,      0.0765,       // High                        Medium           Bad             Low                      
+		   0.71,        0.18841,     0.10159,      // High                        Medium           Bad             Medium                   
+		   0.86,        0.056,       0.084,        // High                        Medium           Bad             High                     
+		   0.5,         0.3,         0.2,          // High                        High             Good            Low                      
+		   0.59,        0.26,        0.15,         // High                        High             Good            Medium                   
+		   0.68,        0.22,        0.1,          // High                        High             Good            High                     
+		   0.82,        0.13313,     0.04687,      // High                        High             Bad             Low                      
+		   0.93,        0.055,       0.015,        // High                        High             Bad             Medium                   
+		   0.99,        0.004999991, 0.005);       // High                        High             Bad             High                     ;
+	whenchanged = 1477001764;
+	likelihood = (0.00121729, 7.400743e-4, 0.001528627);
+	belief = (0.6571264, 0.1272814, 0.2155923);
+	visual V1 {
+		center = (576, 444);
+		height = 7;
+		};
+	};
+
+node Weather_Effect {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = ();
+	probs = 
+		// Good         Bad          
+		  (0.797,       0.203);
+	whenchanged = 1476911951;
+	likelihood = (0.01663525, 1);
+	belief = (0.1422334, 0.8577666);
+	visual V1 {
+		center = (1128, 54);
+		height = 3;
+		};
+	};
+
+node Material_Management {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, Medium, High);
+	parents = ();
+	probs = 
+		// Low          Medium       High         
+		  (0.1111111,   0.2222222,   0.6666667);
+	whenchanged = 1476998984;
+	likelihood = (0.06129615, 0.00718609, 0.0173189);
+	belief = (0.2851456, 0.07333219, 0.6415222);
+	visual V1 {
+		center = (1176, 120);
+		height = 2;
+		};
+	};
+
+node Operating_Time {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = ();
+	probs = 
+		// Good         Bad          
+		  (0.85,        0.15);
+	whenchanged = 1476911939;
+	likelihood = (0.0909091, 1);
+	belief = (0.5268352, 0.4731648);
+	visual V1 {
+		center = (1194, 216);
+		height = 4;
+		};
+	};
+
+node Working_Site {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = ();
+	probs = 
+		// Good         Bad          
+		  (0.8,         0.2);
+	whenchanged = 1476911936;
+	likelihood = (0.08284026, 1);
+	belief = (0.3660628, 0.6339372);
+	visual V1 {
+		center = (1110, 306);
+		height = 5;
+		};
+	};
+
+node Environmental_Effects {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = (Weather_Effect, Material_Management, Operating_Time, Working_Site);
+	probs = 
+		// Good         Bad           // Weather_Effect Material_Management Operating_Time Working_Site 
+		  (0.8915,      0.1085,       // Good           Low                 Good           Good         
+		   0.6715,      0.3285,       // Good           Low                 Good           Bad          
+		   0.675,       0.325,        // Good           Low                 Bad            Good         
+		   0.4515,      0.5485,       // Good           Low                 Bad            Bad          
+		   0.8515,      0.1485,       // Good           Medium              Good           Good         
+		   0.7515,      0.2485,       // Good           Medium              Good           Bad          
+		   0.7115,      0.2885,       // Good           Medium              Bad            Good         
+		   0.64215,     0.35785,      // Good           Medium              Bad            Bad          
+		   0.9918,      0.00819999,   // Good           High                Good           Good         
+		   0.845,       0.155,        // Good           High                Good           Bad          
+		   0.72185,     0.27815,      // Good           High                Bad            Good         
+		   0.5415,      0.4585,       // Good           High                Bad            Bad          
+		   0.4248,      0.5752,       // Bad            Low                 Good           Good         
+		   0.34215,     0.65785,      // Bad            Low                 Good           Bad          
+		   0.37185,     0.62815,      // Bad            Low                 Bad            Good         
+		   0.0558,      0.9442,       // Bad            Low                 Bad            Bad          
+		   0.3415,      0.6585,       // Bad            Medium              Good           Good         
+		   0.2915,      0.7085,       // Bad            Medium              Good           Bad          
+		   0.2115,      0.7885,       // Bad            Medium              Bad            Good         
+		   0.1826,      0.8174,       // Bad            Medium              Bad            Bad          
+		   0.3559,      0.6441,       // Bad            High                Good           Good         
+		   0.48515,     0.51485,      // Bad            High                Good           Bad          
+		   0.4328,      0.5672,       // Bad            High                Bad            Good         
+		   0.12485,     0.87515);     // Bad            High                Bad            Bad          ;
+	numcases = 1;
+	whenchanged = 1476999012;
+	evidence = Good;
+	belief = (1, 0);
+	visual V1 {
+		center = (876, 180);
+		height = 19;
+		};
+	};
+
+node Safety_Education {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (True, False);
+	parents = ();
+	probs = 
+		// True         False        
+		  (0.8,         0.2);
+	whenchanged = 1476911929;
+	likelihood = (0.4155844, 1);
+	belief = (0.462363, 0.537637);
+	visual V1 {
+		center = (1044, 534);
+		height = 12;
+		};
+	};
+
+node Safety_Mechanism {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Good, Bad);
+	parents = ();
+	probs = 
+		// Good         Bad          
+		  (0.8525,      0.1475);
+	whenchanged = 1476998991;
+	likelihood = (0.01444715, 1);
+	belief = (0.0462206, 0.9537794);
+	visual V1 {
+		center = (1212, 492);
+		height = 13;
+		};
+	};
+
+node Reliable_pilot {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (True, False);
+	parents = ();
+	probs = 
+		// True         False        
+		  (0.8141201,   0.1858799);
+	whenchanged = 1476998960;
+	belief = (0.6562123, 0.3437877);
+	visual V1 {
+		center = (1206, 408);
+		height = 14;
+		};
+	};
+
+node Safety {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (High, Low);
+	parents = (Safety_Education, Safety_Mechanism, Reliable_pilot);
+	probs = 
+		// High         Low           // Safety_Education Safety_Mechanism Reliable_pilot 
+		  (0.9515,      0.0485,       // True             Good             True           
+		   0.7225,      0.2775,       // True             Good             False          
+		   0.841,       0.159,        // True             Bad              True           
+		   0.4615,      0.5385,       // True             Bad              False          
+		   0.7815,      0.2185,       // False            Good             True           
+		   0.4515,      0.5485,       // False            Good             False          
+		   0.5815,      0.4185,       // False            Bad              True           
+		   0.0548,      0.9452);      // False            Bad              False          ;
+	whenchanged = 1476911959;
+	likelihood = (0.07450174, 1);
+	belief = (0.134648, 0.865352);
+	visual V1 {
+		center = (1014, 420);
+		height = 11;
+		link 1 {
+			path = ((1038, 508), (1021, 446));
+			};
+		};
+	};
+
+node Aircraft_Risk {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Low, High);
+	parents = (Technology_Fault, Maintenance, Environmental_Effects, Safety);
+	probs = 
+		// Low          High          // Technology_Fault Maintenance Environmental_Effects Safety 
+		  (0.842874,    0.157126,     // Low              low         Good                  High   
+		   0.5125,      0.4875,       // Low              low         Good                  Low    
+		   0.4915,      0.5085,       // Low              low         Bad                   High   
+		   0.217845,    0.782155,     // Low              low         Bad                   Low    
+		   0.9248,      0.07519996,   // Low              Medium      Good                  High   
+		   0.56185,     0.43815,      // Low              Medium      Good                  Low    
+		   0.8615,      0.1385,       // Low              Medium      Bad                   High   
+		   0.6425,      0.3575,       // Low              Medium      Bad                   Low    
+		   0.94585,     0.05415,      // Low              High        Good                  High   
+		   0.8685,      0.1315,       // Low              High        Good                  Low    
+		   0.7315,      0.2685,       // Low              High        Bad                   High   
+		   0.612185,    0.387815,     // Low              High        Bad                   Low    
+		   0.5125,      0.4875,       // High             low         Good                  High   
+		   0.35158,     0.64842,      // High             low         Good                  Low    
+		   0.1515,      0.8485,       // High             low         Bad                   High   
+		   0.09285,     0.90715,      // High             low         Bad                   Low    
+		   0.52158,     0.47842,      // High             Medium      Good                  High   
+		   0.48125,     0.51875,      // High             Medium      Good                  Low    
+		   0.4225,      0.5775,       // High             Medium      Bad                   High   
+		   0.248,       0.752,        // High             Medium      Bad                   Low    
+		   0.69256,     0.30744,      // High             High        Good                  High   
+		   0.582,       0.418,        // High             High        Good                  Low    
+		   0.6528,      0.3472,       // High             High        Bad                   High   
+		   0.5025,      0.4975);      // High             High        Bad                   Low    ;
+	numcases = 1;
+	whenchanged = 1476911791;
+	likelihood = (1, 1);
+	belief = (0.5433332, 0.4566668);
+	visual V1 {
+		center = (618, 108);
+		height = 20;
+		};
+	};
+ElimOrder = (Safety_Education, Safety_Mechanism, Reliable_pilot, Repeat_Defect, Not_Normal_Report, Fault_Log_Maintenance, SDR, Weather_Effect, Operating_Time, Working_Site, Material_Management, Aircraft_Risk, Technology_Fault, Environmental_Effects, Safety, General_Maintenance_Mistake, Maintenance_Log, Serious_Mistakes, All_Symtoms_Whn_Accident, Maintenance);
+};
